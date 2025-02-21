@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  @apply antialiased;
+}
+
+.bg-gradient-orange-blue {
+  background: linear-gradient(135deg, 
+    rgba(82, 107, 133, 1),
+    rgba(107, 142, 178, 0.8)
+  );
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  @apply text-text-primary text-base leading-relaxed overflow-hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-secondary/20 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-secondary/30;
+}
+
+/* Backdrop blur */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+/* Floating effect for cards */
+.card {
+  @apply bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply text-text-primary font-semibold leading-relaxed;
+}
+
+p, span {
+  @apply text-text-primary text-lg leading-relaxed;
+}
+
+.shadow-chat {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@layer base {
+  body {
+    @apply text-text-primary bg-white;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20;
+  }
+}
