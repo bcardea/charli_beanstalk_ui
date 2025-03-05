@@ -13,7 +13,23 @@ export default function LocationPage({
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [userName, setUserName] = useState<string>('Guest');
   const maxRetries = 3;
+
+  // Get location name from URL
+  useEffect(() => {
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const locationName = searchParams.get('locationName');
+      console.log('Location name from URL:', locationName);
+      
+      if (locationName && locationName.trim() !== '') {
+        setUserName(locationName.trim());
+      }
+    } catch (err) {
+      console.error('Error reading location name:', err);
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -31,7 +47,10 @@ export default function LocationPage({
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ locationId: params.locationId }),
+          body: JSON.stringify({ 
+            locationId: params.locationId,
+            name: userName
+          }),
         });
 
         if (!response.ok) {
@@ -46,6 +65,10 @@ export default function LocationPage({
           setIsInitialized(true);
           setError(null);
           setRetryCount(0);
+          // Update userName from user data if available and not already set
+          if (data.user?.full_name && userName === 'Guest') {
+            setUserName(data.user.full_name);
+          }
         }
       } catch (err) {
         console.error('Error initializing user:', err);
@@ -70,7 +93,7 @@ export default function LocationPage({
         clearTimeout(retryTimeout);
       }
     };
-  }, [params.locationId, retryCount]);
+  }, [params.locationId, retryCount, userName]);
 
   if (error) {
     return (
@@ -96,7 +119,7 @@ export default function LocationPage({
     <LocationProvider>
       <div className="flex h-screen bg-gradient-orange-blue">
         <ChatHistory />
-        <ChatArea />
+        <ChatArea userName={userName} />
       </div>
     </LocationProvider>
   );

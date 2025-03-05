@@ -3,90 +3,194 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  @apply antialiased;
-}
-
-.bg-gradient-orange-blue {
-  background: linear-gradient(135deg, 
-    rgba(82, 107, 133, 1),
-    rgba(107, 142, 178, 0.8)
-  );
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
-  @apply text-text-primary text-base leading-relaxed overflow-hidden;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-secondary/20 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-secondary/30;
-}
-
-/* Backdrop blur */
-.backdrop-blur-sm {
-  backdrop-filter: blur(8px);
-}
-
-/* Floating effect for cards */
-.card {
-  @apply bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  @apply text-text-primary font-semibold leading-relaxed;
-}
-
-p, span {
-  @apply text-text-primary text-lg leading-relaxed;
-}
-
-.shadow-chat {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --primary: #e67f23;
+  --primary-dark: #d97320;
+  --secondary: #34495e;
+  --background: #2d3748;
+  --surface: #242937;
+  --surface-hover: #2c324a;
+  --text: #e4e6eb;
+  --text-secondary: #b0b3b8;
+  --border: rgba(255, 255, 255, 0.1);
+  --primary-20: rgba(230, 127, 35, 0.2);
+  --primary-5: rgba(230, 127, 35, 0.05);
+  --background-alt: #2c324a;
 }
 
 @layer base {
   body {
-    @apply text-text-primary bg-white;
+    @apply bg-[--background] text-[--text];
   }
 }
 
 @layer components {
-  .card {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20;
+  .btn-primary {
+    @apply px-6 py-3 rounded-xl font-medium
+           bg-gradient-to-br from-[--primary] to-[--primary-dark]
+           text-white transition-all duration-300
+           hover:shadow-lg hover:shadow-[--primary-5]
+           disabled:opacity-50 disabled:cursor-not-allowed
+           disabled:hover:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-xl font-medium
+           bg-[--surface-hover] text-[--text]
+           border border-[--border] transition-all duration-300
+           hover:border-[--primary-20]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .feature-card {
+    @apply relative w-full p-6 bg-[--surface] rounded-xl border border-[--border] 
+           flex items-center gap-4 transition-all duration-300
+           hover:bg-[--surface-hover] hover:border-[--primary-20] hover:shadow-lg
+           hover:shadow-[--primary-5];
+  }
+
+  .feature-card-icon {
+    @apply flex-shrink-0 w-12 h-12 rounded-xl 
+           flex items-center justify-center text-[--primary];
+    background: linear-gradient(135deg, var(--primary-5), var(--primary-20));
+  }
+
+  .feature-card-content {
+    @apply flex-1;
+  }
+
+  .feature-card-title {
+    @apply text-lg font-semibold mb-1;
+  }
+
+  .feature-card-description {
+    @apply text-sm text-[--text-secondary];
+  }
+
+  .chat-container {
+    @apply bg-[--surface] rounded-2xl border border-[--border] shadow-xl;
+    gap: 1.5rem;
+    height: 100%;
+  }
+
+  .chat-header {
+    @apply p-4 border-b border-[--border] bg-[--surface];
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chat-messages {
+    @apply p-6 space-y-4;
+    padding: 1rem 0;
+    gap: 1rem;
+  }
+
+  .chat-message {
+    @apply max-w-[80%] rounded-2xl p-4 mb-6;
+  }
+
+  .chat-message-user {
+    @apply ml-auto;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border-top-right-radius: 0;
+  }
+
+  .chat-message-assistant {
+    @apply mr-auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-top-left-radius: 0;
+  }
+
+  .loading-dots {
+    @apply flex items-center gap-1 p-4 max-w-[80%];
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    border-top-left-radius: 0;
+  }
+
+  .loading-dot {
+    @apply w-2 h-2 rounded-full;
+    background: var(--primary);
+    animation: bounce 1s infinite;
+  }
+
+  .loading-dot:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .loading-dot:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-0.25rem);
+    }
+  }
+
+  .chat-input-container {
+    @apply p-4 border-t border-[--border] bg-[--surface];
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .chat-input {
+    @apply flex-1 bg-[--surface-hover] border border-[--border] rounded-xl px-4 py-3
+           text-[--text] placeholder-[--text-secondary]
+           focus:outline-none focus:ring-2 focus:ring-[--primary-20]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background-color: var(--background);
+    transition: border-color 0.2s;
+  }
+
+  .chat-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .chat-send-button {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    @apply flex items-center gap-2 px-6 py-3 rounded-xl text-white font-medium
+           disabled:opacity-50 disabled:cursor-not-allowed
+           hover:shadow-lg transition-all duration-300;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+  }
+
+  .chat-send-button:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+  }
+
+  .chat-send-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(0.6);
+      opacity: 0.4;
+    }
+    50% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 }

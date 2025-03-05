@@ -1,67 +1,82 @@
 'use client'
 
-import Image from 'next/image'
+import { useState } from 'react'
+import CompanyModal from '../modals/CompanyModal'
 
 interface NavigationButton {
   title: string;
-  imageUrl: string;
-  href: string;
   description: string;
+  icon: JSX.Element;
+  onClick: () => void;
 }
 
 export default function ChatHistory() {
+  const [isCompanyModalOpen, setIsCompanyModalOpen] = useState(false)
+
   const navigationButtons: NavigationButton[] = [
     {
       title: 'My Company',
-      description: 'Manage and analyze your business data',
-      imageUrl: 'https://picsum.photos/800/400?random=1',
-      href: '/company'
+      description: 'View and manage your company information',
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      ),
+      onClick: () => setIsCompanyModalOpen(true)
     },
     {
-      title: 'My Target Market',
-      description: 'Explore market trends and opportunities',
-      imageUrl: 'https://picsum.photos/800/400?random=2',
-      href: '/market'
+      title: 'My Customers',
+      description: 'Access your customer database',
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      ),
+      onClick: () => {}
     },
     {
-      title: 'Past Campaigns',
-      description: 'Review and optimize your campaigns',
-      imageUrl: 'https://picsum.photos/800/400?random=3',
-      href: '/campaigns'
+      title: 'My Campaigns',
+      description: 'Track your marketing campaigns',
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+        </svg>
+      ),
+      onClick: () => {}
     }
   ]
 
   return (
-    <div className="w-[360px] bg-white/10 backdrop-blur-md">
-      <div className="p-6 pt-8 space-y-6">
+    <>
+      <div className="w-[360px] p-6 space-y-4">
         {navigationButtons.map((button, index) => (
           <button
             key={index}
-            className="relative w-full h-44 rounded-2xl overflow-hidden group transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
+            className="group w-full"
+            onClick={button.onClick}
           >
-            {/* Background Image */}
-            <Image
-              src={button.imageUrl}
-              alt={button.title}
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/80 transition-opacity duration-300 group-hover:opacity-90" />
-            
-            {/* Content */}
-            <div className="absolute inset-0 p-6 flex flex-col justify-end transform transition-transform duration-300 group-hover:translate-y-0">
-              <h3 className="text-2xl font-semibold text-white mb-2 drop-shadow-lg">
-                {button.title}
-              </h3>
-              <p className="text-white/80 text-sm transform transition-all duration-300 opacity-0 -translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
-                {button.description}
-              </p>
+            <div className="feature-card">
+              <div className="feature-card-icon">
+                {button.icon}
+              </div>
+              <div className="feature-card-content">
+                <h3 className="feature-card-title">
+                  {button.title}
+                </h3>
+                <p className="feature-card-description">
+                  {button.description}
+                </p>
+              </div>
             </div>
           </button>
         ))}
       </div>
-    </div>
+
+      <CompanyModal 
+        isOpen={isCompanyModalOpen}
+        onClose={() => setIsCompanyModalOpen(false)}
+      />
+    </>
   )
 }
