@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import fs from 'fs'
+import path from 'path'
 
 // Initialize Supabase client with service role key
 const supabase = createClient(
@@ -48,6 +50,34 @@ export async function POST() {
       `)
     }
 
+    // Check and create target_market table
+    const { error: targetMarketError } = await supabase
+      .from('target_market')
+      .select('*')
+      .limit(1)
+      .single()
+
+    if (targetMarketError) {
+      // Read and execute the target market SQL file
+      const targetMarketSqlPath = path.join(process.cwd(), 'src', 'app', 'api', 'setup-db', 'target-market.sql')
+      const targetMarketSql = fs.readFileSync(targetMarketSqlPath, 'utf8')
+      await supabase.rpc('exec_sql', { sql: targetMarketSql })
+    }
+
+    // Check and create target_customer table
+    const { error: targetCustomerError } = await supabase
+      .from('target_customer')
+      .select('*')
+      .limit(1)
+      .single()
+
+    if (targetCustomerError) {
+      // Read and execute the target customer SQL file
+      const targetCustomerSqlPath = path.join(process.cwd(), 'src', 'app', 'api', 'setup-db', 'target-customer.sql')
+      const targetCustomerSql = fs.readFileSync(targetCustomerSqlPath, 'utf8')
+      await supabase.rpc('exec_sql', { sql: targetCustomerSql })
+    }
+
     return NextResponse.json({ message: 'Database setup completed successfully' })
   } catch (error: any) {
     console.error('Error setting up database:', error)
@@ -61,31 +91,31 @@ export async function POST() {
 export async function GET() {
   try {
     // Read the SQL file
-    const sqlPath = path.join(process.cwd(), 'src', 'app', 'api', 'setup-db', 'chat-history.sql');
-    const sql = fs.readFileSync(sqlPath, 'utf8');
+    const sqlPath = path.join(process.cwd(), 'src', 'app', 'api', 'setup-db', 'chat-history.sql')
+    const sql = fs.readFileSync(sqlPath, 'utf8')
 
     // Execute the SQL
-    const { error } = await supabase.from('chat_history').select('id').limit(1);
+    const { error } = await supabase.from('chat_history').select('id').limit(1)
     
     if (error?.code === 'PGRST116') {
       // Table doesn't exist, create it
-      const { error: setupError } = await supabase.rpc('exec_sql', { sql });
+      const { error: setupError } = await supabase.rpc('exec_sql', { sql })
       
       if (setupError) {
-        console.error('Error setting up chat_history table:', setupError);
-        return NextResponse.json({ error: setupError.message }, { status: 500 });
+        console.error('Error setting up chat_history table:', setupError)
+        return NextResponse.json({ error: setupError.message }, { status: 500 })
       }
       
-      return NextResponse.json({ message: 'Chat history table created successfully' });
+      return NextResponse.json({ message: 'Chat history table created successfully' })
     }
     
-    return NextResponse.json({ message: 'Chat history table already exists' });
+    return NextResponse.json({ message: 'Chat history table already exists' })
 
   } catch (error: any) {
-    console.error('Error in setup-db:', error);
+    console.error('Error in setup-db:', error)
     return NextResponse.json(
       { error: error.message || 'Failed to setup database' },
       { status: 500 }
-    );
+    )
   }
 }
